@@ -8,6 +8,7 @@ import java.io.*;
 import java.util.function.BiConsumer;
 
 public class FileUtils {
+
     private static final Logger log = LoggerFactory.getLogger(FileUtils.class);
 
     public static <T> T read (String path, T returnObj, BiConsumer<T, String> func) {
@@ -21,8 +22,6 @@ public class FileUtils {
             }
 
             return returnObj;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -30,12 +29,27 @@ public class FileUtils {
         return returnObj;
     }
 
-    public static void write(String resultPath) {
-        if (StringUtils.isEmpty(resultPath)) {
+    public static <T> void write(String descPath, T infoObj, BiConsumer<BufferedWriter, T> func) {
+        if (StringUtils.isEmpty(descPath)) {
+            log.debug("resultPath가 없으므로 중단");
             return;
         }
 
-        File file = new File(resultPath);
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(descPath))) {
 
+            func.accept(bw, infoObj);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
+    public static void println(BufferedWriter bw, String value) {
+        try {
+            bw.append(value);
+            bw.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    };
 }

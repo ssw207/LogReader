@@ -1,5 +1,7 @@
 package log;
 
+import log.domain.Report;
+import log.dto.LogResultDto;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +22,7 @@ class ReportTest {
     @Test
     public void 최다호출_apikey_조회() throws Exception {
         //when
-        String maxCallApiKey = report.getMaxCallApiKey();
+        String maxCallApiKey = report.getApiKeyByLimit(1).get(0).getName();
 
         //then
         assertEquals(maxCallApiKey, "e3ea");
@@ -29,44 +31,37 @@ class ReportTest {
     @Test
     public void 최대호출_상위_3개_api_server_id() throws Exception {
         //when
-        List<String> list = report.getApiServerIdByCntReqUpTo(3);
+        List<LogResultDto> list = report.getApiServerIdByLimit(3);
 
         //then
         assertEquals(list.size(), 3);
-        assertEquals(list.get(0), "knowledge");
-        assertEquals(list.get(1), "news");
-        assertEquals(list.get(2), "blog");
+        assertEquals(list.get(0).getName(), "knowledge");
+        assertEquals(list.get(1).getName(), "news");
+        assertEquals(list.get(2).getName(), "blog");
     }
     
     @Test
     public void 웹브라우저_사용비율() throws Exception {
         //when
-        List<BrowserInfo> lists = report.getBrowserUseRatio();
-
-        BrowserInfo browser1 = lists.get(0);
-        BrowserInfo browser2 = lists.get(1);
-        BrowserInfo browser3 = lists.get(2);
-        BrowserInfo browser4 = lists.get(3);
-        BrowserInfo browser5 = lists.get(4);
+        List<LogResultDto> list = report.getBrowserUseRatio();
 
         //then
-        assertEquals(browser1.getName(), "IE");
-        assertEquals(browser2.getName(), "Firefox");
-        assertEquals(browser3.getName(), "Opera");
-        assertEquals(browser4.getName(), "Chrome");
-        assertEquals(browser5.getName(), "Safari");
-
-        assertEquals(browser1.getRtoPerCent(), 85);
-        assertEquals(browser2.getRtoPerCent(), 7);
-        assertEquals(browser3.getRtoPerCent(), 3);
-        assertEquals(browser4.getRtoPerCent(), 3);
-        assertEquals(browser5.getRtoPerCent(), 2);
+        assertEquals(list.get(0).getName(), "IE");
+        assertEquals(list.get(1).getName(), "Firefox");
+        assertEquals(list.get(2).getName(), "Opera");
+        assertEquals(list.get(3).getName(), "Chrome");
+        assertEquals(list.get(4).getName(), "Safari");
+        assertEquals(list.get(5).getValue(), 85);
+        assertEquals(list.get(6).getValue(), 7);
+        assertEquals(list.get(7).getValue(), 3);
+        assertEquals(list.get(8).getValue(), 3);
+        assertEquals(list.get(9).getValue(), 2);
     }
 
     @Test
     public void 결과_출력_테스트() throws Exception {
         //given
-        String resultPath = "";
+        String resultPath = "log-report.txt";
 
         //when
         report.makeResultFile(resultPath);

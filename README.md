@@ -88,3 +88,8 @@
    ```java
   private static final Logger log = LoggerFactory.getLogger(LogInfo.class);
   ```
+- 결과파일 출력시 BufferedWriter는
+```java
+BufferedWriter bw = new BufferedWriter(descPath)
+bw.
+```

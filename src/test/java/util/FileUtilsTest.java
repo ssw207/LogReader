@@ -1,6 +1,6 @@
 package util;
 
-import log.Report;
+import log.domain.Report;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 

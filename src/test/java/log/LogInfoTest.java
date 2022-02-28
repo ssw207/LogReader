@@ -1,8 +1,9 @@
 package log;
 
+import log.domain.LogInfo;
 import org.junit.jupiter.api.Test;
 
-import static log.LogInfo.API_KEY;
+import static log.domain.LogInfo.API_KEY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class LogInfoTest {

@@ -1,11 +1,15 @@
 package log;
 
+import log.domain.Report;
 import util.FileUtils;
 
 public class LogReader {
 
-    public static Report read(String fileName) {
-        Report result = FileUtils.read(fileName, new Report(), (report, line) -> {
+    private LogReader() {
+    }
+
+    public static Report read(String filePath) {
+        Report result = FileUtils.read(filePath, new Report(), (report, line) -> {
             report.add(line);
         });
 

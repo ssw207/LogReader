@@ -1,9 +1,6 @@
-package log;
+package log.domain;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import util.FileUtils;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -11,8 +8,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class LogInfo {
-
-    private static final Logger log = LoggerFactory.getLogger(FileUtils.class);
 
     public static final String API_KEY = "apikey";
 
