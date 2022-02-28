@@ -1,6 +1,8 @@
 package log;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -8,6 +10,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class LogInfo {
+    Logger log = LoggerFactory.getLogger(LogInfo.class);
+
     public static final String API_KEY = "apikey";
 
     private String status;
@@ -16,14 +20,6 @@ public class LogInfo {
     private String callTime;
     private String apiServerId;
     private Map<String,String> params = new HashMap<>();
-
-    public LogInfo() {
-    }
-
-    public LogInfo(String line) {
-        add(line);
-    }
-
     public String getStatus() {
         return status;
     }
@@ -46,7 +42,7 @@ public class LogInfo {
 
     public void add(String line) {
         String newLine = line.substring(1, line.length()-1); // 앞과 끝의 [] 제거
-        String[] tokens = newLine.split("\\]\\["); // ][ 기준으로 쪼개기
+        String[] tokens = newLine.split("]\\["); // ][ 기준으로 쪼개기
 
         this.status =tokens[0];
         this.url = tokens[1];
@@ -58,14 +54,14 @@ public class LogInfo {
         this.apiServerId = extractApiServerId(split[0]);
 
         if (split.length == 2) { // 길이가 1인경우 파라미터가 없음
-            initParams(split[1]);;
+            initParams(split[1]);
         }
     }
 
     /**
      * URL에서 apiServerId 추출
      * @param url ex)http://apis.daum.net/search/knowledge/
-     * @return
+     * @return apiServerId
      */
     private String extractApiServerId(String url) {
         if (StringUtils.isEmpty(url)) {
@@ -77,7 +73,7 @@ public class LogInfo {
         }
 
         // 마지만 "/" ~ 끝까지 추출
-        return url.substring(url.lastIndexOf("/")+1, url.length());
+        return url.substring(url.lastIndexOf("/")+1);
     }
 
     /**
@@ -87,12 +83,11 @@ public class LogInfo {
     void initParams(String paramStr) {
         String[] tmpParams = paramStr.split("&");
 
-        this.params = Arrays.asList(tmpParams).stream()
+        this.params = Arrays.stream(tmpParams)
                 .map(str -> str.split("=")) // 요소를 꺼낸뒤로 "=" 로 쪼개 배열로 만듬
                 .collect(Collectors.toMap(e1 -> e1[0], e2 -> e2[1])); //배열의 첫번째 요소를 map의 key 두번째요소를 value로 세팅
     }
 
-    //TODO param을 호출시 String으로 입력받아 오타위험있음
     public String getParam(String key) {
         return params.getOrDefault(key, "");
     }
@@ -103,6 +98,6 @@ public class LogInfo {
         this.browser = null;
         this.callTime = null;
         this.apiServerId = null;
-        this.params.clear();;
+        this.params.clear();
     }
 }

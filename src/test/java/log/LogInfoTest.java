@@ -26,7 +26,8 @@ class LogInfoTest {
         String line = "[200][http://apis.daum.net/search/knowledge?apikey=23jf&q=daum][IE][2012-06-10 08:00:00]";
 
         //when
-        LogInfo logInfo = new LogInfo(line);
+        LogInfo logInfo = new LogInfo();
+        logInfo.add(line);
 
         assertEquals(logInfo.getStatus(), "200");
         assertEquals(logInfo.getUrl(), "http://apis.daum.net/search/knowledge?apikey=23jf&q=daum");
@@ -42,7 +43,8 @@ class LogInfoTest {
         String line = "[200][http://apis.daum.net/search/knowledge][IE][2012-06-10 08:00:00]";
 
         //when
-        LogInfo logInfo = new LogInfo(line);
+        LogInfo logInfo = new LogInfo();
+        logInfo.add(line);
 
         assertEquals(logInfo.getStatus(), "200");
         assertEquals(logInfo.getUrl(), "http://apis.daum.net/search/knowledge");
@@ -58,7 +60,8 @@ class LogInfoTest {
         String line = "[200][http://apis.daum.net/search/knowledge/][IE][2012-06-10 08:00:00]";
 
         //when
-        LogInfo logInfo = new LogInfo(line);
+        LogInfo logInfo = new LogInfo();
+        logInfo.add(line);
 
         assertEquals(logInfo.getStatus(), "200");
         assertEquals(logInfo.getUrl(), "http://apis.daum.net/search/knowledge/");

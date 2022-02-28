@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import static log.LogInfo.API_KEY;
 
 public class Report {
-    Logger logger = LoggerFactory.getLogger(Report.class);
+    Logger log = LoggerFactory.getLogger(Report.class);
 
     private LogInfo logInfo = new LogInfo();
     private int totalCallCount = 0; // 전체 api 호출 횟수
@@ -20,6 +20,7 @@ public class Report {
 
     public void add(String line) {
         if (StringUtils.isEmpty(line)) {
+            log.debug("입력값이 없음");
             return;
         }
 
@@ -38,9 +39,11 @@ public class Report {
         apiCallCountByApiServerId = sortMap(apiCallCountByApiServerId);
         apiCallCountByBrowser = sortMap(apiCallCountByBrowser);
 
-        logger.debug(apiCallCountByApikey.toString());
-        logger.debug(apiCallCountByApiServerId.toString());
-        logger.debug(apiCallCountByBrowser.toString());
+        log.debug("====================== Report 결과 정렬 시작 ==================");
+        log.debug("apiCallCountByApikey [{}]",apiCallCountByApikey.toString());
+        log.debug("apiCallCountByApiServerId [{}]",apiCallCountByApiServerId.toString());
+        log.debug("apiCallCountByBrowser [{}]",apiCallCountByBrowser.toString());
+        log.debug("====================== Report 결과 정렬 종료 ==================");
     }
 
     private Map<String, Integer> sortMap(Map<String, Integer> unsortMap) {
