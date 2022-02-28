@@ -77,6 +77,7 @@
 4. 로그파일 리소스 경로가 아니라 외부경로에서 받아오도록 수정
    - 로그파일은 프로젝트 외부에 있는게 일반적임
 5. log4j2 추가
+6. 람다식이용해 FileUtils의 도메인 클래스 의존성제거
 
 # 고민중
 - Report.java 클래스의 각 proc(), clear()를 외부에서 호출해야하나?
@@ -88,8 +89,8 @@
    ```java
   private static final Logger log = LoggerFactory.getLogger(LogInfo.class);
   ```
-- 결과파일 출력시 BufferedWriter는
-```java
-BufferedWriter bw = new BufferedWriter(descPath)
-bw.
-```
+- Report클랫의 책임이 너무 과도해보임
+  - 로그파일을 읽어 통계정보생성
+  - 통계정보 정렬
+  - 통계정보 조회
+  - 통계정보 파일로 출력

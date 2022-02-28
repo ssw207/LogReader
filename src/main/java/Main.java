@@ -17,7 +17,9 @@ public class Main {
     }
 
     public void proc(String srcPath, String desPath) {
-        Report report = LogReader.read(srcPath);
+        LogReader logReader = new LogReader();
+
+        Report report = logReader.read(srcPath);
         report.makeResultFile(desPath);
     }
 }

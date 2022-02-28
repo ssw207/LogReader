@@ -68,7 +68,7 @@ public class Report {
                         (oldValue, newValue) -> oldValue, LinkedHashMap::new));
     }
 
-    public void addCount(Map<String, Long> map, String key) {
+    private void addCount(Map<String, Long> map, String key) {
         if (StringUtils.isEmpty(key)) { // key가 없는경우 {key : "", value:160} 이런식으로 체크되므로 수정처리
             return;
         }
@@ -150,7 +150,7 @@ public class Report {
         list.forEach(dto -> FileUtils.println(bw, String.format(format, dto.getName(), dto.getValue())));
     }
 
-    public long getBrowserUseRto(Long browserCallCount, Long totalCallCount) {
+    private long getBrowserUseRto(Long browserCallCount, Long totalCallCount) {
         double rto = Double.valueOf(browserCallCount) / Double.valueOf(totalCallCount);
         return Math.round(rto * 100);
     }

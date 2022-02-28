@@ -31,7 +31,7 @@ public class FileUtils {
 
     public static <T> void write(String descPath, T infoObj, BiConsumer<BufferedWriter, T> func) {
         if (StringUtils.isEmpty(descPath)) {
-            log.debug("resultPath가 없으므로 중단");
+            log.debug("descPath가 없으므로 중단");
             return;
         }
 
@@ -51,5 +51,5 @@ public class FileUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    };
+    }
 }

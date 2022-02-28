@@ -18,7 +18,8 @@ class ReportTest {
 
     @BeforeAll // 클래스실행시 1회만 실행됨
     static void init() {
-        report = LogReader.read(FILE_NAME);
+        LogReader logReader = new LogReader();
+        report = logReader.read(FILE_NAME);
     }
 
     @Test
