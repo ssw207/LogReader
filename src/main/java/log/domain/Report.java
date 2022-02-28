@@ -17,13 +17,13 @@ import static log.domain.LogInfo.API_KEY;
 
 public class Report {
 
-    private static final Logger log = LoggerFactory.getLogger(FileUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(Report.class);
 
     private long totalCallCount = 0L; // 전체 api 호출 횟수
     private Map<String, Long> apiCallCountByApikey = new HashMap<>(); // apikey별 호출횟수
     private Map<String, Long> apiCallCountByApiServerId = new HashMap<>(); // apiserverId별 호출횟수
     private Map<String, Long> apiCallCountByBrowser = new HashMap<>(); // 브라우저별 호출 횟수
-    private LogInfo logInfo = new LogInfo(); // 로그정보
+    private final LogInfo logInfo = new LogInfo(); // 로그정보
 
     public long getTotalCallCount() {
         return totalCallCount;
@@ -51,9 +51,9 @@ public class Report {
         apiCallCountByBrowser = getSortedLinkedHashMap(apiCallCountByBrowser);
 
         log.debug("====================== Report 결과 정렬 시작 ==================");
-        log.debug("apiCallCountByApikey [{}]",apiCallCountByApikey.toString());
-        log.debug("apiCallCountByApiServerId [{}]",apiCallCountByApiServerId.toString());
-        log.debug("apiCallCountByBrowser [{}]",apiCallCountByBrowser.toString());
+        log.debug("apiCallCountByApikey [{}]",apiCallCountByApikey);
+        log.debug("apiCallCountByApiServerId [{}]",apiCallCountByApiServerId);
+        log.debug("apiCallCountByBrowser [{}]",apiCallCountByBrowser);
         log.debug("====================== Report 결과 정렬 종료 ==================");
     }
 
@@ -80,8 +80,6 @@ public class Report {
      * - [200][http://apis.daum.net/search/knowledge?apikey=23jf&q=daum][IE][2012-06-10 08:00:00]
      * - url에서 파라미터 apikey 값을 추출해 apikey별 갯수를 count함 (map이용)
      * - 람다식 이용
-     *
-     * @return
      */
     public List<LogResultDto> getApiKeyByLimit(int limit) {
         return toDtoByLimit(apiCallCountByApikey, limit);
@@ -94,9 +92,7 @@ public class Report {
     private List<LogResultDto> toDtoByLimit(Map<String, Long> map, int limit) {
         return map.entrySet().stream()
                 .limit(limit)
-                .map(e -> {
-                    return new LogResultDto(LogResultDto.API_SERVICE_ID, e.getKey(), e.getValue());
-                })
+                .map(e -> new LogResultDto(LogResultDto.API_SERVICE_ID, e.getKey(), e.getValue()))
                 .collect(Collectors.toList());
     }
 
@@ -106,14 +102,11 @@ public class Report {
      * - 최초 로그를 읽어올때 브라우저를 카운팅 (Map이용)
      * - 전체 카운팅필요
      *
-     * @return
      */
     public List<LogResultDto> getBrowserUseRatio() {
         return apiCallCountByBrowser.entrySet()
                 .stream()
-                .map(e -> {
-                    return new LogResultDto(LogResultDto.BROWSER, e.getKey(), getBrowserUseRto(e.getValue(), totalCallCount));
-                })
+                .map(e -> new LogResultDto(LogResultDto.BROWSER, e.getKey(), getBrowserUseRto(e.getValue(), totalCallCount)))
                 .collect(Collectors.toList());
     }
 
@@ -149,10 +142,7 @@ public class Report {
     }
 
     private void printValue(BufferedWriter bw, List<LogResultDto> list, String format) {
-        list.stream()
-                .forEach(dto -> {
-                    FileUtils.println(bw, String.format(format, dto.getName(), dto.getValue()));
-                });
+        list.forEach(dto -> FileUtils.println(bw, String.format(format, dto.getName(), dto.getValue())));
     }
 
     public long getBrowserUseRto(Long browserCallCount, Long totalCallCount) {
