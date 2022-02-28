@@ -3,6 +3,7 @@ package log;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.FileUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -10,13 +11,14 @@ import java.util.stream.Collectors;
 import static log.LogInfo.API_KEY;
 
 public class Report {
-    Logger log = LoggerFactory.getLogger(Report.class);
 
-    private LogInfo logInfo = new LogInfo();
+    private static final Logger log = LoggerFactory.getLogger(FileUtils.class);
+
     private int totalCallCount = 0; // 전체 api 호출 횟수
     private Map<String, Integer> apiCallCountByApikey = new HashMap<>(); // apikey별 호출횟수
     private Map<String, Integer> apiCallCountByApiServerId = new HashMap<>(); // apiserverId별 호출횟수
     private Map<String, Integer> apiCallCountByBrowser = new HashMap<>(); // 브라우저별 호출 횟수
+    private LogInfo logInfo = new LogInfo(); // 로그정보
 
     public void add(String line) {
         if (StringUtils.isEmpty(line)) {
@@ -28,16 +30,16 @@ public class Report {
 
         addCount(apiCallCountByApikey, logInfo.getParam(API_KEY));
         addCount(apiCallCountByApiServerId, logInfo.getApiServerId());
-        addCount(apiCallCountByBrowser, logInfo.getApiServerId());
+        addCount(apiCallCountByBrowser, logInfo.getBrowser());
         totalCallCount++;
 
         logInfo.clear(); // 로그정보 초기화
     }
 
-    public void sort() {
-        apiCallCountByApikey = sortMap(apiCallCountByApikey);
-        apiCallCountByApiServerId = sortMap(apiCallCountByApiServerId);
-        apiCallCountByBrowser = sortMap(apiCallCountByBrowser);
+    public void sortAll() {
+        apiCallCountByApikey = getSortedLinkedHashMap(apiCallCountByApikey);
+        apiCallCountByApiServerId = getSortedLinkedHashMap(apiCallCountByApiServerId);
+        apiCallCountByBrowser = getSortedLinkedHashMap(apiCallCountByBrowser);
 
         log.debug("====================== Report 결과 정렬 시작 ==================");
         log.debug("apiCallCountByApikey [{}]",apiCallCountByApikey.toString());
@@ -46,7 +48,7 @@ public class Report {
         log.debug("====================== Report 결과 정렬 종료 ==================");
     }
 
-    private Map<String, Integer> sortMap(Map<String, Integer> unsortMap) {
+    private Map<String, Integer> getSortedLinkedHashMap(Map<String, Integer> unsortMap) {
         Comparator<Map.Entry<String, Integer>> comparator = (e1,e2) -> Integer.compare(e2.getValue(), e1.getValue());
 
         return unsortMap.entrySet().stream()
@@ -81,15 +83,11 @@ public class Report {
      * @return
      */
     public String getMaxCallApiKey() {
-        Map<String, Integer> keys = getKeysDescByValue(apiCallCountByApikey, 1);
-        return (keys.isEmpty()) ? "" : keys.keySet().iterator().next();
+        return apiCallCountByApikey.entrySet().stream().findFirst().map(Map.Entry::getKey).orElse("");
     }
 
     public List<String> getApiServerIdByCntReqUpTo(int limit) {
-        Map<String, Integer> keys = getKeysDescByValue(apiCallCountByApikey, limit);
-
-        return keys.keySet().stream()
-                .collect(Collectors.toList());
+        return apiCallCountByApiServerId.entrySet().stream().limit(limit).map(Map.Entry::getKey).collect(Collectors.toList());
     }
 
     /**
@@ -101,18 +99,23 @@ public class Report {
      * @return
      */
     public List<BrowserInfo> getBrowserUseRatio() {
-        return null;
+        return apiCallCountByBrowser.entrySet()
+                .stream()
+                .map(e -> new BrowserInfo(e.getKey(), e.getValue(), totalCallCount))
+                .collect(Collectors.toList());
     }
+    
+    //============================================ 삭제예정 ==========================================
 
+    @Deprecated
     public Map<String, Integer> getKeysDescByValue(Map<String, Integer> map, int limit) {
-        if (!(map instanceof LinkedHashMap)) { // LinkedHashMap 만 정렬가능함
-            return new HashMap<>();
-        }
-
-        System.out.println(map);
         return map.entrySet().stream()
                 .sorted((e1, e2) -> Integer.compare(e2.getValue(), e1.getValue()))
                 .limit(limit)
                 .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue())); //배열의 첫번째 요소를 map의 key 두번째요소를 value로 세팅
+    }
+
+    public void makeResultFile(String resultPath) {
+        FileUtils.write(resultPath);
     }
 }

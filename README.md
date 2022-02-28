@@ -76,8 +76,15 @@
 3. apikey 파라미터가 없는경우 카운팅 하지 않도록 수정
 4. 로그파일 리소스 경로가 아니라 외부경로에서 받아오도록 수정
    - 로그파일은 프로젝트 외부에 있는게 일반적임
+5. log4j2 추가
 
 # 고민중
 - Report.java 클래스의 각 proc(), clear()를 외부에서 호출해야하나?
 - LogReader.class는 현재 파일명을 받아 객체를 생성하로 Report객체를 생성하는 일만 담당중.
-  
+- logger 선언 스타일
+  ```java
+  private final Logger log = LoggerFactory.getLogger(LogInfo.class);
+  ```
+   ```java
+  private static final Logger log = LoggerFactory.getLogger(LogInfo.class);
+  ```

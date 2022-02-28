@@ -1,21 +1,19 @@
-import log.BrowserInfo;
-import log.LogReader;
-import log.Report;
-import org.junit.jupiter.api.BeforeEach;
+package log;
+
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class LogReaderTest {
+class ReportTest {
     private static final String FILE_NAME = "src/main/resources/input.log";
 
-    Report report;
+    static Report report;
 
-    @BeforeEach // 클래스실행시 1회만 실행됨
-    public void init() {
-        System.out.println("LogReaderTest.init");
+    @BeforeAll // 클래스실행시 1회만 실행됨
+    static void init() {
         report = LogReader.read(FILE_NAME);
     }
 
@@ -30,15 +28,14 @@ class LogReaderTest {
 
     @Test
     public void 최대호출_상위_3개_api_server_id() throws Exception {
-
         //when
         List<String> list = report.getApiServerIdByCntReqUpTo(3);
 
         //then
-        assertEquals(list, 3);
-        assertEquals(list.get(0), "blog");
-        assertEquals(list.get(1), "vclip");
-        assertEquals(list.get(2), "image");
+        assertEquals(list.size(), 3);
+        assertEquals(list.get(0), "knowledge");
+        assertEquals(list.get(1), "news");
+        assertEquals(list.get(2), "blog");
     }
     
     @Test
@@ -54,15 +51,26 @@ class LogReaderTest {
 
         //then
         assertEquals(browser1.getName(), "IE");
-        assertEquals(browser2.getName(), "Chrome");
-        assertEquals(browser3.getName(), "Safari");
-        assertEquals(browser4.getName(), "Firefox");
-        assertEquals(browser5.getName(), "Opera");
+        assertEquals(browser2.getName(), "Firefox");
+        assertEquals(browser3.getName(), "Opera");
+        assertEquals(browser4.getName(), "Chrome");
+        assertEquals(browser5.getName(), "Safari");
 
-        assertEquals(browser1.getRto(), 60);
-        assertEquals(browser2.getRto(), 20);
-        assertEquals(browser3.getRto(), 10);
-        assertEquals(browser4.getRto(), 7);
-        assertEquals(browser5.getRto(), 3);
+        assertEquals(browser1.getRtoPerCent(), 85);
+        assertEquals(browser2.getRtoPerCent(), 7);
+        assertEquals(browser3.getRtoPerCent(), 3);
+        assertEquals(browser4.getRtoPerCent(), 3);
+        assertEquals(browser5.getRtoPerCent(), 2);
+    }
+
+    @Test
+    public void 결과_출력_테스트() throws Exception {
+        //given
+        String resultPath = "";
+
+        //when
+        report.makeResultFile(resultPath);
+
+        //then
     }
 }

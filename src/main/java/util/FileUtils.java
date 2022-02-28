@@ -1,10 +1,15 @@
 package util;
 
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.util.function.BiConsumer;
 
 public class FileUtils {
-    
+    private static final Logger log = LoggerFactory.getLogger(FileUtils.class);
+
     public static <T> T read (String path, T returnObj, BiConsumer<T, String> func) {
         File file = new File(path);
 
@@ -23,5 +28,14 @@ public class FileUtils {
         }
 
         return returnObj;
+    }
+
+    public static void write(String resultPath) {
+        if (StringUtils.isEmpty(resultPath)) {
+            return;
+        }
+
+        File file = new File(resultPath);
+
     }
 }

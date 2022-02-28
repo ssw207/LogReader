@@ -3,6 +3,7 @@ package log;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.FileUtils;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,7 +11,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class LogInfo {
-    Logger log = LoggerFactory.getLogger(LogInfo.class);
+
+    private static final Logger log = LoggerFactory.getLogger(FileUtils.class);
 
     public static final String API_KEY = "apikey";
 
@@ -44,7 +46,7 @@ public class LogInfo {
         String newLine = line.substring(1, line.length()-1); // 앞과 끝의 [] 제거
         String[] tokens = newLine.split("]\\["); // ][ 기준으로 쪼개기
 
-        this.status =tokens[0];
+        this.status = tokens[0];
         this.url = tokens[1];
         this.browser = tokens[2];
         this.callTime = tokens[3];

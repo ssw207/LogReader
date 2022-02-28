@@ -6,22 +6,9 @@ import static log.LogInfo.API_KEY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class LogInfoTest {
-    @Test
-    public void 정규식_테스트() throws Exception {
-        //given
-        String line = "[200][http://apis.daum.net/search/knowledge?apikey=23jf&q=daum][IE][2012-06-10 08:00:00]";
-
-        //when
-        line = line.substring(1, line.length()-1); // 앞과 끝의 [] 제거
-        String[] split = line.split("\\]\\["); // ][ 기준으로 쪼개기
-
-        //then
-        assertEquals(split.length, 4);
-        assertEquals(split[0], "200");
-    }
 
     @Test
-    public void LogInfo_생성_테스트() throws Exception {
+    public void 로그정보_생성() throws Exception {
         //given
         String line = "[200][http://apis.daum.net/search/knowledge?apikey=23jf&q=daum][IE][2012-06-10 08:00:00]";
 
@@ -38,7 +25,7 @@ class LogInfoTest {
     }
 
     @Test
-    public void LogInfo_생성_테스트2() throws Exception {
+    public void 파라미터가_없는경우_로그정보_생성() throws Exception {
         //given
         String line = "[200][http://apis.daum.net/search/knowledge][IE][2012-06-10 08:00:00]";
 
@@ -55,7 +42,7 @@ class LogInfoTest {
     }
 
     @Test
-    public void LogInfo_생성_테스트3() throws Exception {
+    public void URI가_없는경우_로그정보_생성() throws Exception {
         //given
         String line = "[200][http://apis.daum.net/search/knowledge/][IE][2012-06-10 08:00:00]";
 
