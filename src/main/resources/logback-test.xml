@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration>
+<configuration>
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>%-5level %d{YYYY-MM-DD HH:mm:ss.SSSS} [%thread] %logger[%method:%line] - %msg%n</Pattern>
+		</layout>
+	</appender>
+
+	<appender name="fileOutput" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>log/app.log</file>
+
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>log/log.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+		</rollingPolicy>
+
+		<encoder>
+			<Pattern>%-5level %d{YYYY-MM-DD HH:mm:ss.SSSS} [%thread] %logger[%method:%line] - %msg%n</Pattern>
+		</encoder>
+	</appender>
+
+	<appender name="errorFileOutput" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>log/app.log</file>
+
+		<!--매일 로그파일을 압축해 log/error.yyyy-mm-dd.1.log.gz 만들고 백업함-->
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>log/error.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+		</rollingPolicy>
+
+		<encoder>
+			<Pattern>%-5level %d{YYYY-MM-DD HH:mm:ss.SSSS} [%thread] %logger[%method:%line] - %msg%n</Pattern>
+		</encoder>
+	</appender>
+
+	<root level="ERROR">
+		<appender-ref ref="FILE" />
+		<appender-ref ref="errorFileOutput" />
+	</root>
+
+	<root level="DEBUG">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="fileOutput" />
+	</root>
+</configuration>

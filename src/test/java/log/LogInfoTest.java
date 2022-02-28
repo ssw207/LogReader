@@ -2,6 +2,7 @@ package log;
 
 import org.junit.jupiter.api.Test;
 
+import static log.LogInfo.API_KEY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class LogInfoTest {
@@ -25,12 +26,45 @@ class LogInfoTest {
         String line = "[200][http://apis.daum.net/search/knowledge?apikey=23jf&q=daum][IE][2012-06-10 08:00:00]";
 
         //when
-        LogInfo logInfo = LogInfo.of(line);
+        LogInfo logInfo = new LogInfo(line);
 
         assertEquals(logInfo.getStatus(), "200");
         assertEquals(logInfo.getUrl(), "http://apis.daum.net/search/knowledge?apikey=23jf&q=daum");
         assertEquals(logInfo.getBrowser(), "IE");
         assertEquals(logInfo.getCallTime(), "2012-06-10 08:00:00");
+        assertEquals(logInfo.getApiServerId(), "knowledge");
+        assertEquals(logInfo.getParam("apikey"), "23jf");
     }
 
+    @Test
+    public void LogInfo_생성_테스트2() throws Exception {
+        //given
+        String line = "[200][http://apis.daum.net/search/knowledge][IE][2012-06-10 08:00:00]";
+
+        //when
+        LogInfo logInfo = new LogInfo(line);
+
+        assertEquals(logInfo.getStatus(), "200");
+        assertEquals(logInfo.getUrl(), "http://apis.daum.net/search/knowledge");
+        assertEquals(logInfo.getBrowser(), "IE");
+        assertEquals(logInfo.getCallTime(), "2012-06-10 08:00:00");
+        assertEquals(logInfo.getApiServerId(), "knowledge");
+        assertEquals(logInfo.getParam("apikey"), "");
+    }
+
+    @Test
+    public void LogInfo_생성_테스트3() throws Exception {
+        //given
+        String line = "[200][http://apis.daum.net/search/knowledge/][IE][2012-06-10 08:00:00]";
+
+        //when
+        LogInfo logInfo = new LogInfo(line);
+
+        assertEquals(logInfo.getStatus(), "200");
+        assertEquals(logInfo.getUrl(), "http://apis.daum.net/search/knowledge/");
+        assertEquals(logInfo.getBrowser(), "IE");
+        assertEquals(logInfo.getCallTime(), "2012-06-10 08:00:00");
+        assertEquals(logInfo.getApiServerId(), "knowledge");
+        assertEquals(logInfo.getParam(API_KEY), "");
+    }
 }

@@ -1,35 +1,27 @@
 package util;
 
-import org.apache.commons.lang3.StringUtils;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.*;
+import java.util.function.BiConsumer;
 
 public class FileUtils {
-    public static List<String> readResourcesLines(String path) {
-        if (StringUtils.isEmpty(path)) {
-            throw new IllegalArgumentException("path가 null또는 공백값");
-        }
-        
-        if (!path.startsWith("/")) {
-            throw new IllegalArgumentException("path가 /로 시작하지 않음");
-        }
+    
+    public static <T> T read (String path, T returnObj, BiConsumer<T, String> func) {
+        File file = new File(path);
 
-        List<String> list = new ArrayList<>();
-
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(FileUtils.class.getResourceAsStream(path)))) {
+        try (BufferedReader br = new BufferedReader (new InputStreamReader(new FileInputStream(file)))) {
             String line;
 
             while ((line = br.readLine()) != null) {
-                list.add(line);
+                func.accept(returnObj,line);
             }
 
-        } catch (Exception e) {
+            return returnObj;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return list;
+        return returnObj;
     }
 }
