@@ -1,6 +1,6 @@
-package log.domain;
+package com.my.log.domain;
 
-import log.dto.LogResultDto;
+import com.my.log.dto.LogResultDto;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,11 +68,13 @@ public class Report {
         apiCallCountByApiServerId = getSortedLinkedHashMap(apiCallCountByApiServerId);
         apiCallCountByBrowser = getSortedLinkedHashMap(apiCallCountByBrowser);
 
-        log.debug("====================== Report 결과 정렬 시작 ==================");
-        log.debug("apiCallCountByApikey [{}]",apiCallCountByApikey);
-        log.debug("apiCallCountByApiServerId [{}]",apiCallCountByApiServerId);
-        log.debug("apiCallCountByBrowser [{}]",apiCallCountByBrowser);
-        log.debug("====================== Report 결과 정렬 종료 ==================");
+        log.info("\n");
+        log.info("====================== 2. 로그정보 분석 결과 ==================");
+        log.info("apikey 호출 횟수 [{}]",apiCallCountByApikey);
+        log.info("ApiServerId 호출 횟수 [{}]",apiCallCountByApiServerId);
+        log.info("Browser 호출 횟수 [{}]",apiCallCountByBrowser);
+        log.info("=======================================================");
+        log.info("\n");
     }
 
     /**

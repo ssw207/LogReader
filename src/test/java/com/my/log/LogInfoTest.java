@@ -1,6 +1,6 @@
-package log;
+package com.my.log;
 
-import log.domain.LogInfo;
+import com.my.log.domain.LogInfo;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

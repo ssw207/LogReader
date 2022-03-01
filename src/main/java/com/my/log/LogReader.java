@@ -1,14 +1,21 @@
-package log.service;
+package com.my.log;
 
-import log.domain.Report;
-import log.dto.LogResultDto;
-import util.FileUtils;
+import com.my.log.domain.Report;
+import com.my.log.dto.LogResultDto;
+import com.my.util.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.List;
 
 public class LogReader {
+
+    private static final Logger log = LoggerFactory.getLogger(LogReader.class);
+
+    public static final String DEFAULT_SRC_PATH = "src/main/resources/input.log";
+    public static final String DEFAULT_DES_PATH = "result/output.log";
 
     private Report report;
 
@@ -17,13 +24,18 @@ public class LogReader {
     }
 
     public void read(String filePath) {
-        Report result = FileUtils.read(filePath, new Report(), (rp, line) -> report.add(line));
+        log.info("\n");
+        log.info("============= 1. 로그 파일 읽기 시작, 경로 [{}]============", filePath);
+        Report result = FileUtils.read(filePath, new Report(), (rp, line) -> rp.add(line));
         result.sortAll();
-
         this.report = result;
+        log.info("============= 로그파일 읽기 종료 ========================");
+        log.info("\n");
     }
 
     public void makeResultFile(String resultPath) {
+        log.info("\n");
+        log.info("============= 3. 결과 파일 생성 시작, 경로 [{}]============", resultPath);
         FileUtils.write(resultPath, this.report, (bw, rp) -> {
             try {
                 printLog(bw, rp);
@@ -31,11 +43,13 @@ public class LogReader {
                 e.printStackTrace();
             }
         });
+        log.info("============= 결과 파일 생성 종료 =========================");
+        log.info("\n");
     }
 
     private void printLog(BufferedWriter bw, Report report) throws IOException {
         FileUtils.println(bw, "최다호출 API KEY");
-        printValue(bw, report.getApiKeyCallCountByLimit(1));
+        printValue(bw, report.getApiKeyCallCountByLimit(1), "%s");
         bw.newLine();
 
         int limit = 3;

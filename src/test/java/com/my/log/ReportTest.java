@@ -1,19 +1,18 @@
-package log;
+package com.my.log;
 
-import log.domain.Report;
-import log.dto.LogResultDto;
-import log.service.LogReader;
+import com.my.log.domain.Report;
+import com.my.log.dto.LogResultDto;
+import com.my.util.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import util.FileUtils;
 
 import java.util.List;
-import java.util.function.BiConsumer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ReportTest {
-    private static final String FILE_NAME = "src/main/resources/input.log";
+    private static final String SRC_PATH = LogReader.DEFAULT_SRC_PATH;
+    private static final String DESC_PATH = LogReader.DEFAULT_DES_PATH;
 
     private static Report report;
     private static LogReader logReader;
@@ -21,7 +20,7 @@ class ReportTest {
     @BeforeAll // 클래스실행시 1회만 실행됨
     static void init() {
         LogReader lr = new LogReader();
-        lr.read(FILE_NAME);
+        lr.read(SRC_PATH);
 
         report = lr.getReport();
         logReader = lr;
@@ -69,19 +68,14 @@ class ReportTest {
     @Test
     void 결과_출력_테스트() {
         //given
-        String resultPath = "log-report.txt";
-        String resultStr = "최다호출 API KEYe3ea : 493상위 3개의 API Service ID와 각각의 요청 수knowledge : 836news : 834blog : 826웹브라우저별 사용 비율IE : 85%Firefox : 7%Opera : 3%Chrome : 3%Safari : 2%";
+        String resultStr = "최다호출 API KEYe3ea 493상위 3개의 API Service ID와 각각의 요청 수knowledge : 836news : 834blog : 826웹브라우저별 사용 비율IE : 85%Firefox : 7%Opera : 3%Chrome : 3%Safari : 2%";
         StringBuilder result = new StringBuilder();
 
-        BiConsumer<StringBuilder, String> func = (sb, line) -> {
-            sb.append(line);
-        };
-
         //when
-        logReader.makeResultFile(resultPath);
+        logReader.makeResultFile(DESC_PATH);
 
         //then
-        FileUtils.read(resultPath, result, func);
+        FileUtils.read(DESC_PATH, result, (sb, line) -> sb.append(line));
         assertEquals(resultStr, result.toString());
     }
 }

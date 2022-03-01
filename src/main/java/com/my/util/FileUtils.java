@@ -1,10 +1,12 @@
-package util;
+package com.my.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.function.BiConsumer;
 
 public class FileUtils {
@@ -35,10 +37,12 @@ public class FileUtils {
             return;
         }
 
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(descPath))) {
+        try {
+            Files.createDirectories(Paths.get(descPath).getParent()); // 상위경로의 폴더가 없으면 생성
 
-            func.accept(bw, infoObj);
-
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(descPath))) {
+                func.accept(bw, infoObj);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

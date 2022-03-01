@@ -1,4 +1,4 @@
-package log.domain;
+package com.my.log.domain;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -8,6 +8,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class LogInfo {
+
+    public static final String OK = "200";
+    public static final String NOT_FOUND = "404";
+    public static final String ERROR_PARAM = "10";
 
     private String status;
     private String url;
@@ -39,6 +43,11 @@ public class LogInfo {
     public void add(String line) {
         String newLine = line.substring(1, line.length()-1); // 앞과 끝의 [] 제거
         String[] tokens = newLine.split("]\\["); // ][ 기준으로 쪼개기
+
+        //정상응답만 처리
+        if (!OK.equals(tokens[0])) {
+            return;
+        }
 
         this.status = tokens[0];
         this.url = tokens[1];

@@ -1,4 +1,4 @@
-package log.dto;
+package com.my.log.dto;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
