@@ -4,20 +4,15 @@ import log.dto.LogResultDto;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.FileUtils;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
 import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
-
-
-import static log.domain.LogInfo.API_KEY;
 
 public class Report {
 
     private static final Logger log = LoggerFactory.getLogger(Report.class);
+
+    private static final String API_KEY = "apikey";
 
     private long totalCallCount = 0L; // 전체 api 호출 횟수
     private Map<String, Long> apiCallCountByApikey = new HashMap<>(); // apikey별 호출횟수
@@ -30,7 +25,11 @@ public class Report {
     }
 
     //=============================================== Report 생성로직 시작 ===============================
-    
+
+    /**
+     * 로그정보 추가
+     * @param line
+     */
     public void add(String line) {
         if (StringUtils.isEmpty(line)) {
             log.debug("입력값이 없음");
@@ -47,6 +46,23 @@ public class Report {
         logInfo.clear(); // 로그정보 초기화
     }
 
+    /**
+     * 로그정보 key별로 카운팅
+     * @param map
+     * @param key
+     */
+    private void addCount(Map<String, Long> map, String key) {
+        if (StringUtils.isEmpty(key)) { // key가 없는경우 {key : "", value:160} 이런식으로 체크되므로 수정처리
+            return;
+        }
+
+        long cnt = map.getOrDefault(key, 0L);
+        map.put(key, cnt + 1);
+    }
+
+    /**
+     * 로그정보 정렬
+     */
     public void sortAll() {
         apiCallCountByApikey = getSortedLinkedHashMap(apiCallCountByApikey);
         apiCallCountByApiServerId = getSortedLinkedHashMap(apiCallCountByApiServerId);
@@ -59,6 +75,11 @@ public class Report {
         log.debug("====================== Report 결과 정렬 종료 ==================");
     }
 
+    /**
+     * 로그정보 Map을 정렬후 리턴
+     * @param unsortMap
+     * @return
+     */
     private Map<String, Long> getSortedLinkedHashMap(Map<String, Long> unsortMap) {
         Comparator<Map.Entry<String, Long>> comparator = (e1,e2) -> Long.compare(e2.getValue(), e1.getValue());
 
@@ -68,23 +89,13 @@ public class Report {
                         (oldValue, newValue) -> oldValue, LinkedHashMap::new));
     }
 
-    private void addCount(Map<String, Long> map, String key) {
-        if (StringUtils.isEmpty(key)) { // key가 없는경우 {key : "", value:160} 이런식으로 체크되므로 수정처리
-            return;
-        }
-
-        long cnt = map.getOrDefault(key, 0L);
-        map.put(key, cnt + 1);
-    }
-    
     //=============================================== Report 생성로직 끝 ===============================
 
     //=============================================== Report 조회로직 시작 ===============================
     /**
      * 브라우저 사용비율 조회
      * - 브라우저 사용비율은 = 브라우저로그수/전체로그수
-     * - 최초 로그를 읽어올때 브라우저를 카운팅 (Map이용)
-     * - 전체 카운팅필요
+     * - 최초 로그를 읽어올때 브라우저를 카운팅
      */
     public List<LogResultDto> getBrowserUseRatio() {
         return apiCallCountByBrowser.entrySet()
@@ -93,15 +104,25 @@ public class Report {
                 .collect(Collectors.toList());
     }
 
+    private long getBrowserUseRto(Long browserCallCount, Long totalCallCount) {
+        double rto = Double.valueOf(browserCallCount) / Double.valueOf(totalCallCount);
+        return Math.round(rto * 100);
+    }
+
     /**
-     * 최다호출 apikey 조회
+     * apikey 호출수 DESC 조회
      * - [200][http://apis.daum.net/search/knowledge?apikey=23jf&q=daum][IE][2012-06-10 08:00:00]
-     * - url에서 파라미터 apikey 값을 추출해 apikey별 갯수를 count함 (map이용)
+     * - url에서 파라미터 apikey 값을 추출해 apikey별 건수를 리턴
      */
     public List<LogResultDto> getApiKeyCallCountByLimit(int limit) {
         return toDtoByLimit(apiCallCountByApikey, limit);
     }
 
+    /**
+     * apiServer 호출수 DESC 조회
+     * @param limit
+     * @return
+     */
     public List<LogResultDto> getApiServerCallCountIdByLimit(int limit) {
         return toDtoByLimit(apiCallCountByApiServerId, limit);
     }
@@ -114,46 +135,4 @@ public class Report {
     }
 
     //=============================================== Report 조회로직 끝 ===============================
-
-    //=============================================== Report 로그파일 생성로직 시작 ===============================
-    public void makeResultFile(String resultPath) {
-        BiConsumer<BufferedWriter, Report> func = (bw, report) -> {
-            try {
-                printLog(bw, report);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        };
-
-        FileUtils.write(resultPath, this, func);
-    }
-
-    private void printLog(BufferedWriter bw, Report report) throws IOException {
-        FileUtils.println(bw, "최다호출 API KEY");
-        printValue(bw, report.getApiKeyCallCountByLimit(1));
-        bw.newLine();
-
-        int limit = 3;
-        FileUtils.println(bw, String.format("상위 %d개의 API Service ID와 각각의 요청 수", limit));
-        printValue(bw, report.getApiServerCallCountIdByLimit(limit));
-        bw.newLine();
-
-        FileUtils.println(bw, "웹브라우저별 사용 비율");
-        printValue(bw, report.getBrowserUseRatio(), "%s : %d%%");
-    }
-
-    private void printValue(BufferedWriter bw, List<LogResultDto> list) {
-        printValue(bw, list, "%s : %d");
-    }
-
-    private void printValue(BufferedWriter bw, List<LogResultDto> list, String format) {
-        list.forEach(dto -> FileUtils.println(bw, String.format(format, dto.getName(), dto.getValue())));
-    }
-
-    private long getBrowserUseRto(Long browserCallCount, Long totalCallCount) {
-        double rto = Double.valueOf(browserCallCount) / Double.valueOf(totalCallCount);
-        return Math.round(rto * 100);
-    }
-    //=============================================== Report 로그파일 생성로직 끝 ===============================
-    
 }

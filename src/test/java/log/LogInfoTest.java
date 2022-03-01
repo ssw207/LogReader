@@ -3,13 +3,12 @@ package log;
 import log.domain.LogInfo;
 import org.junit.jupiter.api.Test;
 
-import static log.domain.LogInfo.API_KEY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class LogInfoTest {
 
     @Test
-    public void 로그정보_생성() throws Exception {
+    void 로그정보_생성() {
         //given
         String line = "[200][http://apis.daum.net/search/knowledge?apikey=23jf&q=daum][IE][2012-06-10 08:00:00]";
 
@@ -17,16 +16,16 @@ class LogInfoTest {
         LogInfo logInfo = new LogInfo();
         logInfo.add(line);
 
-        assertEquals(logInfo.getStatus(), "200");
-        assertEquals(logInfo.getUrl(), "http://apis.daum.net/search/knowledge?apikey=23jf&q=daum");
-        assertEquals(logInfo.getBrowser(), "IE");
-        assertEquals(logInfo.getCallTime(), "2012-06-10 08:00:00");
-        assertEquals(logInfo.getApiServerId(), "knowledge");
-        assertEquals(logInfo.getParam("apikey"), "23jf");
+        assertEquals( "200",logInfo.getStatus());
+        assertEquals( "http://apis.daum.net/search/knowledge?apikey=23jf&q=daum",logInfo.getUrl());
+        assertEquals( "IE",logInfo.getBrowser());
+        assertEquals( "2012-06-10 08:00:00",logInfo.getCallTime());
+        assertEquals( "knowledge",logInfo.getApiServerId());
+        assertEquals("23jf",logInfo.getParam("apikey"));
     }
 
     @Test
-    public void 파라미터가_없는경우_로그정보_생성() throws Exception {
+    void 파라미터가_없는경우_로그정보_생성() {
         //given
         String line = "[200][http://apis.daum.net/search/knowledge][IE][2012-06-10 08:00:00]";
 
@@ -34,16 +33,16 @@ class LogInfoTest {
         LogInfo logInfo = new LogInfo();
         logInfo.add(line);
 
-        assertEquals(logInfo.getStatus(), "200");
-        assertEquals(logInfo.getUrl(), "http://apis.daum.net/search/knowledge");
-        assertEquals(logInfo.getBrowser(), "IE");
-        assertEquals(logInfo.getCallTime(), "2012-06-10 08:00:00");
-        assertEquals(logInfo.getApiServerId(), "knowledge");
-        assertEquals(logInfo.getParam("apikey"), "");
+        assertEquals("200",logInfo.getStatus());
+        assertEquals("http://apis.daum.net/search/knowledge",logInfo.getUrl());
+        assertEquals("IE",logInfo.getBrowser());
+        assertEquals("2012-06-10 08:00:00",logInfo.getCallTime());
+        assertEquals("knowledge",logInfo.getApiServerId());
+        assertEquals("", logInfo.getParam("apikey"));
     }
 
     @Test
-    public void URI가_없는경우_로그정보_생성() throws Exception {
+    void URI가_없는경우_로그정보_생성() {
         //given
         String line = "[200][http://apis.daum.net/search/knowledge/][IE][2012-06-10 08:00:00]";
 
@@ -51,11 +50,11 @@ class LogInfoTest {
         LogInfo logInfo = new LogInfo();
         logInfo.add(line);
 
-        assertEquals(logInfo.getStatus(), "200");
-        assertEquals(logInfo.getUrl(), "http://apis.daum.net/search/knowledge/");
-        assertEquals(logInfo.getBrowser(), "IE");
-        assertEquals(logInfo.getCallTime(), "2012-06-10 08:00:00");
-        assertEquals(logInfo.getApiServerId(), "knowledge");
-        assertEquals(logInfo.getParam(API_KEY), "");
+        assertEquals("200",logInfo.getStatus());
+        assertEquals("http://apis.daum.net/search/knowledge/",logInfo.getUrl());
+        assertEquals("IE",logInfo.getBrowser());
+        assertEquals("2012-06-10 08:00:00",logInfo.getCallTime());
+        assertEquals("knowledge",logInfo.getApiServerId());
+        assertEquals("", logInfo.getParam("apikey"));
     }
 }

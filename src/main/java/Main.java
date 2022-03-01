@@ -1,5 +1,4 @@
-import log.LogReader;
-import log.domain.Report;
+import log.service.LogReader;
 
 public class Main {
     private static final String DEFAULT_SRC_PATH = "src/main/java/resources/input.log";
@@ -18,8 +17,7 @@ public class Main {
 
     public void proc(String srcPath, String desPath) {
         LogReader logReader = new LogReader();
-
-        Report report = logReader.read(srcPath);
-        report.makeResultFile(desPath);
+        logReader.read(srcPath);
+        logReader.makeResultFile(desPath);
     }
 }

@@ -2,6 +2,7 @@ package log;
 
 import log.domain.Report;
 import log.dto.LogResultDto;
+import log.service.LogReader;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import util.FileUtils;
@@ -14,16 +15,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class ReportTest {
     private static final String FILE_NAME = "src/main/resources/input.log";
 
-    static Report report;
+    private static Report report;
+    private static LogReader logReader;
 
     @BeforeAll // 클래스실행시 1회만 실행됨
     static void init() {
-        LogReader logReader = new LogReader();
-        report = logReader.read(FILE_NAME);
+        LogReader lr = new LogReader();
+        lr.read(FILE_NAME);
+
+        report = lr.getReport();
+        logReader = lr;
     }
 
     @Test
-    public void 최다호출_apikey_조회() throws Exception {
+    void 최다호출_apikey_조회() {
         //when
         String maxCallApiKey = report.getApiKeyCallCountByLimit(1).get(0).getName();
 
@@ -32,7 +37,7 @@ class ReportTest {
     }
 
     @Test
-    public void 최대호출_상위_3개_api_server_id() throws Exception {
+    void 최대호출_상위_3개_api_server_id() {
         //when
         List<LogResultDto> list = report.getApiServerCallCountIdByLimit(3);
 
@@ -44,7 +49,7 @@ class ReportTest {
     }
     
     @Test
-    public void 웹브라우저_사용비율() throws Exception {
+    void 웹브라우저_사용비율() {
         //when
         List<LogResultDto> list = report.getBrowserUseRatio();
 
@@ -62,7 +67,7 @@ class ReportTest {
     }
 
     @Test
-    public void 결과_출력_테스트() throws Exception {
+    void 결과_출력_테스트() {
         //given
         String resultPath = "log-report.txt";
         String resultStr = "최다호출 API KEYe3ea : 493상위 3개의 API Service ID와 각각의 요청 수knowledge : 836news : 834blog : 826웹브라우저별 사용 비율IE : 85%Firefox : 7%Opera : 3%Chrome : 3%Safari : 2%";
@@ -73,7 +78,7 @@ class ReportTest {
         };
 
         //when
-        report.makeResultFile(resultPath);
+        logReader.makeResultFile(resultPath);
 
         //then
         FileUtils.read(resultPath, result, func);

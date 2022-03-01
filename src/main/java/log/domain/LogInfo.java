@@ -9,14 +9,13 @@ import java.util.stream.Collectors;
 
 public class LogInfo {
 
-    public static final String API_KEY = "apikey";
-
     private String status;
     private String url;
     private String browser;
     private String callTime;
     private String apiServerId;
     private Map<String,String> params = new HashMap<>();
+
     public String getStatus() {
         return status;
     }
@@ -55,6 +54,22 @@ public class LogInfo {
         }
     }
 
+    public String getParam(String key) {
+        return params.getOrDefault(key, "");
+    }
+
+    /**
+     * 초기화
+     */
+    public void clear() {
+        this.status = null;
+        this.url = null;
+        this.browser = null;
+        this.callTime = null;
+        this.apiServerId = null;
+        this.params.clear();
+    }
+
     /**
      * URL에서 apiServerId 추출
      * @param url ex)http://apis.daum.net/search/knowledge/
@@ -77,24 +92,11 @@ public class LogInfo {
      * 파라미터 세팅
      * @param paramStr ex)apikey=23jf&q=daum
      */
-    void initParams(String paramStr) {
+    private void initParams(String paramStr) {
         String[] tmpParams = paramStr.split("&");
 
         this.params = Arrays.stream(tmpParams)
                 .map(str -> str.split("=")) // 요소를 꺼낸뒤로 "=" 로 쪼개 배열로 만듬
                 .collect(Collectors.toMap(e1 -> e1[0], e2 -> e2[1])); //배열의 첫번째 요소를 map의 key 두번째요소를 value로 세팅
-    }
-
-    public String getParam(String key) {
-        return params.getOrDefault(key, "");
-    }
-
-    public void clear() {
-        this.status = null;
-        this.url = null;
-        this.browser = null;
-        this.callTime = null;
-        this.apiServerId = null;
-        this.params.clear();
     }
 }
