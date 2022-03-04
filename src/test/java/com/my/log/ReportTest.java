@@ -58,8 +58,8 @@ class ReportTest {
         assertEquals( "Opera", list.get(2).getName());
         assertEquals( "Chrome", list.get(3).getName());
         assertEquals( "Safari", list.get(4).getName());
-        assertEquals(85, list.get(0).getValue());
-        assertEquals(7, list.get(1).getValue());
+        assertEquals(81, list.get(0).getValue());
+        assertEquals(6, list.get(1).getValue());
         assertEquals(3, list.get(2).getValue());
         assertEquals(3, list.get(3).getValue());
         assertEquals(2, list.get(4).getValue());
@@ -68,7 +68,7 @@ class ReportTest {
     @Test
     void 결과_출력_테스트() {
         //given
-        String resultStr = "최다호출 API KEYe3ea 493상위 3개의 API Service ID와 각각의 요청 수knowledge : 836news : 834blog : 826웹브라우저별 사용 비율IE : 85%Firefox : 7%Opera : 3%Chrome : 3%Safari : 2%";
+        String resultStr = "최다호출 API KEYe3ea상위 3개의 API Service ID와 각각의 요청 수knowledge : 809news : 803blog : 799웹브라우저별 사용 비율IE : 81%Firefox : 6%Opera : 3%Chrome : 3%Safari : 2%";
         StringBuilder result = new StringBuilder();
 
         //when
